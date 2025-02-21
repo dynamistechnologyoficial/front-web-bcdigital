@@ -1,0 +1,164 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-pessoa-heading"
+        data-cy="PessoaCreateUpdateHeading"
+        jhiTranslate="frontWebBcdigitalApp.servicePagamentoPessoa.home.createOrEditLabel"
+      >
+        Criar ou editar Pessoa
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="frontWebBcdigitalApp.servicePagamentoPessoa.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let fotoRef = editForm.get('foto')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_foto" jhiTranslate="frontWebBcdigitalApp.servicePagamentoPessoa.foto">Foto</label>
+          <div>
+            @if (fotoRef.value) {
+              <img
+                [src]="'data:' + editForm.get('fotoContentType')!.value + ';base64,' + fotoRef.value"
+                style="max-height: 100px"
+                alt="pessoa"
+              />
+            }
+            @if (fotoRef.value) {
+              <div class="form-text text-danger clearfix">
+                <span class="pull-start">{{ editForm.get('fotoContentType')!.value }}, {{ byteSize(fotoRef.value!) }}</span>
+                <button
+                  type="button"
+                  (click)="clearInputImage('foto', 'fotoContentType', 'file_foto')"
+                  class="btn btn-secondary btn-xs pull-end"
+                >
+                  <fa-icon icon="times"></fa-icon>
+                </button>
+              </div>
+            }
+            <input
+              type="file"
+              id="file_foto"
+              data-cy="foto"
+              (change)="setFileData($event, 'foto', true)"
+              accept="image/*"
+              jhiTranslate="entity.action.addimage"
+            />
+          </div>
+          <input type="hidden" class="form-control" name="foto" id="field_foto" data-cy="foto" formControlName="foto" />
+          <input type="hidden" class="form-control" name="fotoContentType" id="field_fotoContentType" formControlName="fotoContentType" />
+        </div>
+
+        @let nomeRef = editForm.get('nome')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_nome" jhiTranslate="frontWebBcdigitalApp.servicePagamentoPessoa.nome">Nome</label>
+          <input type="text" class="form-control" name="nome" id="field_nome" data-cy="nome" formControlName="nome" />
+          @if (nomeRef.invalid && (nomeRef.dirty || nomeRef.touched)) {
+            <div>
+              @if (editForm.get('nome')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">O campo é obrigatório.</small>
+              }
+              @if (editForm.get('nome')?.errors?.minlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.minlength" [translateValues]="{ min: '3' }"
+                  >Este campo deve ter pelo menos 3 caracteres.</small
+                >
+              }
+              @if (editForm.get('nome')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '510' }"
+                  >Este campo não pode ter mais de 510 caracteres.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let dtNascimentoRef = editForm.get('dtNascimento')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_dtNascimento" jhiTranslate="frontWebBcdigitalApp.servicePagamentoPessoa.dtNascimento"
+            >Dt Nascimento</label
+          >
+          <div class="input-group">
+            <input
+              id="field_dtNascimento"
+              data-cy="dtNascimento"
+              type="text"
+              class="form-control"
+              name="dtNascimento"
+              ngbDatepicker
+              #dtNascimentoDp="ngbDatepicker"
+              formControlName="dtNascimento"
+            />
+            <button type="button" class="btn btn-secondary" (click)="dtNascimentoDp.toggle()">
+              <fa-icon icon="calendar-alt"></fa-icon>
+            </button>
+          </div>
+          @if (dtNascimentoRef.invalid && (dtNascimentoRef.dirty || dtNascimentoRef.touched)) {
+            <div>
+              @if (editForm.get('dtNascimento')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">O campo é obrigatório.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let cpfRef = editForm.get('cpf')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_cpf" jhiTranslate="frontWebBcdigitalApp.servicePagamentoPessoa.cpf">Cpf</label>
+          <input type="text" class="form-control" name="cpf" id="field_cpf" data-cy="cpf" formControlName="cpf" />
+          @if (cpfRef.invalid && (cpfRef.dirty || cpfRef.touched)) {
+            <div>
+              @if (editForm.get('cpf')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">O campo é obrigatório.</small>
+              }
+              @if (editForm.get('cpf')?.errors?.pattern) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.pattern" [translateValues]="{ pattern: 'Cpf' }"
+                  >Este campo deve estar dentro do seguinte padrão Cpf.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let emailRef = editForm.get('email')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_email" jhiTranslate="frontWebBcdigitalApp.servicePagamentoPessoa.email">Email</label>
+          <input type="text" class="form-control" name="email" id="field_email" data-cy="email" formControlName="email" />
+          @if (emailRef.invalid && (emailRef.dirty || emailRef.touched)) {
+            <div>
+              @if (editForm.get('email')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">O campo é obrigatório.</small>
+              }
+              @if (editForm.get('email')?.errors?.pattern) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.pattern" [translateValues]="{ pattern: 'Email' }"
+                  >Este campo deve estar dentro do seguinte padrão Email.</small
+                >
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancelar</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Salvar</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

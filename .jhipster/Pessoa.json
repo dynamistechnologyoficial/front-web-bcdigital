@@ -1,0 +1,47 @@
+{
+  "annotations": {
+    "changelogDate": "20250209234439"
+  },
+  "clientRootFolder": "ServicePagamento",
+  "databaseType": "sql",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "foto",
+      "fieldType": "ImageBlob"
+    },
+    {
+      "fieldName": "nome",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "minlength", "maxlength"],
+      "fieldValidateRulesMaxlength": "510",
+      "fieldValidateRulesMinlength": "3"
+    },
+    {
+      "fieldName": "dtNascimento",
+      "fieldType": "LocalDate",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "cpf",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "unique", "pattern"],
+      "fieldValidateRulesPattern": "([0-9]{3}\\.?[0-9]{3}\\.?[0-9]{3}\\-?([0-9]){2})"
+    },
+    {
+      "fieldName": "email",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "pattern"],
+      "fieldValidateRulesPattern": "(^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$)"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "microserviceName": "ServicePagamento",
+  "microservicePath": "../service-pagamento",
+  "name": "Pessoa",
+  "pagination": "pagination",
+  "readOnly": false,
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceImpl"
+}

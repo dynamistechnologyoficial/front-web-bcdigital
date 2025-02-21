@@ -1,0 +1,151 @@
+<div>
+  <h2 id="page-heading" data-cy="PessoaHeading">
+    <span jhiTranslate="frontWebBcdigitalApp.servicePagamentoPessoa.home.title">Pessoas</span>
+    <p-datepicker [(ngModel)]="date">
+      <ng-template #date let-date>
+          <strong *ngIf="date.day > 10 && date.day < 15; else elseBlock" style="text-decoration: line-through">{{ date.day }}</strong>
+          <ng-template #elseBlock>{{ date.day }}</ng-template>
+      </ng-template>
+    </p-datepicker>
+    <p-datepicker selectionMode="range" [readonlyInput]="true" />
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span jhiTranslate="frontWebBcdigitalApp.servicePagamentoPessoa.home.refreshListLabel">Atualizar lista</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-pessoa"
+        [routerLink]="['/pessoa/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="frontWebBcdigitalApp.servicePagamentoPessoa.home.createLabel">Criar novo Pessoa</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  <jhi-filter [filters]="filters"></jhi-filter>
+
+  @if (pessoas().length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span jhiTranslate="frontWebBcdigitalApp.servicePagamentoPessoa.home.notFound">Nenhum Pessoa encontrado</span>
+    </div>
+  } @else {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(sortState)]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span jhiTranslate="global.field.id">Código</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="foto">
+              <div class="d-flex">
+                <span jhiTranslate="frontWebBcdigitalApp.servicePagamentoPessoa.foto">Foto</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="nome">
+              <div class="d-flex">
+                <span jhiTranslate="frontWebBcdigitalApp.servicePagamentoPessoa.nome">Nome</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="dtNascimento">
+              <div class="d-flex">
+                <span jhiTranslate="frontWebBcdigitalApp.servicePagamentoPessoa.dtNascimento">Dt Nascimento</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="cpf">
+              <div class="d-flex">
+                <span jhiTranslate="frontWebBcdigitalApp.servicePagamentoPessoa.cpf">Cpf</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="email">
+              <div class="d-flex">
+                <span jhiTranslate="frontWebBcdigitalApp.servicePagamentoPessoa.email">Email</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (pessoa of pessoas(); track trackId(pessoa)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/pessoa', pessoa.id, 'view']">{{ pessoa.id }}</a>
+              </td>
+              <td>
+                @if (pessoa.foto) {
+                  <a (click)="openFile(pessoa.foto, pessoa.fotoContentType)">
+                    <img [src]="'data:' + pessoa.fotoContentType + ';base64,' + pessoa.foto" style="max-height: 30px" alt="pessoa" />
+                  </a>
+                  <span>{{ pessoa.fotoContentType }}, {{ byteSize(pessoa.foto) }}</span>
+                }
+              </td>
+              <td>{{ pessoa.nome }}</td>
+              <td>{{ pessoa.dtNascimento | formatMediumDate }}</td>
+              <td>{{ pessoa.cpf }}</td>
+              <td>{{ pessoa.email }}</td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/pessoa', pessoa.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">Visualizar</span>
+                  </a>
+
+                  <a [routerLink]="['/pessoa', pessoa.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Editar</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(pessoa)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Excluir</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (pessoas().length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
+</div>
