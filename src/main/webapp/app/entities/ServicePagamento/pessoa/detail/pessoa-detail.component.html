@@ -1,0 +1,57 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (pessoa(); as pessoaRef) {
+      <div>
+        <h2 data-cy="pessoaDetailsHeading"><span jhiTranslate="frontWebBcdigitalApp.servicePagamentoPessoa.detail.title">Pessoa</span></h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">Código</span></dt>
+          <dd>
+            <span>{{ pessoaRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="frontWebBcdigitalApp.servicePagamentoPessoa.foto">Foto</span></dt>
+          <dd>
+            @if (pessoaRef.foto) {
+              <div>
+                <a (click)="openFile(pessoaRef?.foto ?? '', pessoaRef.fotoContentType)">
+                  <img [src]="'data:' + pessoaRef.fotoContentType + ';base64,' + pessoaRef.foto" style="max-width: 100%" alt="pessoa" />
+                </a>
+                {{ pessoaRef.fotoContentType }}, {{ byteSize(pessoaRef?.foto ?? '') }}
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="frontWebBcdigitalApp.servicePagamentoPessoa.nome">Nome</span></dt>
+          <dd>
+            <span>{{ pessoaRef.nome }}</span>
+          </dd>
+          <dt><span jhiTranslate="frontWebBcdigitalApp.servicePagamentoPessoa.dtNascimento">Dt Nascimento</span></dt>
+          <dd>
+            <span>{{ pessoaRef.dtNascimento | formatMediumDate }}</span>
+          </dd>
+          <dt><span jhiTranslate="frontWebBcdigitalApp.servicePagamentoPessoa.cpf">Cpf</span></dt>
+          <dd>
+            <span>{{ pessoaRef.cpf }}</span>
+          </dd>
+          <dt><span jhiTranslate="frontWebBcdigitalApp.servicePagamentoPessoa.email">Email</span></dt>
+          <dd>
+            <span>{{ pessoaRef.email }}</span>
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Voltar</span>
+        </button>
+
+        <button type="button" [routerLink]="['/pessoa', pessoaRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editar</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>
